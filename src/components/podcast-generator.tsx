@@ -152,75 +152,22 @@ export default function PodcastGenerator() {
     setStep(4);
   }
 
-const handleGenerate = async () => {
-  setIsGenerating(true);
-  setAudioError(null);
-  console.log("Starting podcast generation process");
+  const handleGenerate = () => {
+    setIsGenerating(true);
+    setAudioError(null);
 
-  try {
-    let response;
-    if (podcastFormat === 'single') {
-      const hostInfo = getHostInfo(selectedHosts[0]);
-      const character = hostInfo.character || '0';
-      console.log(`Generating single-host podcast with character: ${character}`);
-      response = await fetch('/api/generate-podcast', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          endpoint: '/one_person',
-          topic,
-          character,
-        }),
-      });
-    } else {
-      console.log("Generating two-host podcast");
-      response = await fetch('/api/generate-podcast', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          endpoint: '/two_person',
-          topic,
-        }),
-      });
-    }
+    // ... (Remove or comment out the try...catch block) ...
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
+    setAudioFilename('dummy.wav');  // Set a filename
+    setAudioUrl('/dummy.wav'); // Set the path to your dummy file
 
-    const data = await response.json();
-    console.log("Podcast generation response:", data);
-
-    const filename = data.filename || 'generated_podcast.mp3';
-    setAudioFilename(filename);
-    setAudioUrl(`/api/audio/${filename}`);
-    
     setIsGenerating(false);
     setIsPodcastGenerated(true);
-    setStep(5);
-    
+    setStep(5); 
     toast({
       title: "Success",
-      description: "Your podcast has been generated!",
+      description: "Your podcast has been generated!", // You might want to change this message
     });
-
-    // Empty the database after retrieval
-    console.log("Emptying database");
-    await fetch('/api/empty-database', { method: 'POST' });
-
-  } catch (error) {
-    console.error('Error generating podcast:', error);
-    toast({
-      title: "Error",
-      description: "Failed to generate podcast. Please try again.",
-      variant: "destructive",
-    });
-    setIsGenerating(false);
-  }
 };
 
 const togglePlayPause = () => {
